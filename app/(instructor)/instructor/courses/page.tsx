@@ -1,32 +1,39 @@
-"use client";
-
-import { useAuth } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import { redirect } from "next/navigation";
 
-const CoursesPage = () => {
-  const { userId } = useAuth();
-  const router = useRouter();
+import { Button } from "@/components/ui/button";
+import { db } from "@/lib/db";
+import { DataTable } from "@/components/custom/DataTable";
+import { columns } from "@/components/courses/Columns";
 
-  useEffect(() => {
-    if (!userId) {
-      router.push("/sign-in");
-    }
-  }, [userId, router]);
+const CoursesPage = async () => {
+  const { userId } = await auth();
 
   if (!userId) {
-    return <div>Loading...</div>; // Optional loading state while redirecting
+    return redirect("/sign-in");
   }
 
+  const courses = await db.course.findMany({
+    where: {
+      instructorId: userId,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
   return (
-    <div>
-      <Link href="/instructor/create-courses">
-        <button className="btn">Create new courses</button>
+    <div className="px-6 py-4">
+      <Link href="/instructor/create-course">
+        <Button>Create New Course</Button>
       </Link>
+
+      <div className="mt-5">
+        <DataTable columns={columns} data={courses} />
+      </div>
     </div>
   );
 };
 
 export default CoursesPage;
-

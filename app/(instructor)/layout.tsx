@@ -1,23 +1,14 @@
-"use client";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-import { useAuth } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
-import Topbar from "../components/layout/Topbar";
-import Sidebar from "../components/layout/Sidebar";
-import { useEffect } from "react";
+import Topbar from "@/components/layout/Topbar";
+import Sidebar from "@/components/layout/Sidebar";
 
-const InstructorLayout = ({ children }: { children: React.ReactNode }) => {
-  const { userId } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!userId) {
-      router.push("/sign-in");
-    }
-  }, [userId, router]);
+const InstructorLayout = async ({ children }: { children: React.ReactNode }) => {
+  const { userId } = await auth()
 
   if (!userId) {
-    return <div>Loading...</div>; // Optional loading state
+    return redirect("/sign-in")
   }
 
   return (
