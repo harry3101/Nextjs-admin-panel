@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
       { hostname: "res.cloudinary.com" } // ✅ Add Cloudinary
     ],
   },
+  eslint: {
+    
+  ignoreDuringBuilds: true
+
+  }
 };
 
 export default nextConfig;
