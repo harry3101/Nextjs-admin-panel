@@ -3,18 +3,22 @@ import Topbar from "@/components/layout/Topbar";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { ReactNode } from "react";
 
-const CourseDetailsLayout = async ({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: { courseId: string };
-}) => {
-  const { userId } = await auth();
+// Define the LayoutProps interface
+interface LayoutProps {
+  children: ReactNode;
+  params: {
+    courseId: string;
+  };
+}
+
+const CourseDetailsLayout = async ({ children, params }: LayoutProps) => {
+  const authData = await auth();
+  const userId = authData?.userId;
 
   if (!userId) {
-    return redirect("/sign-in");
+    redirect("/sign-in"); // No need to return here as redirect halts execution
   }
 
   const course = await db.course.findUnique({
@@ -34,7 +38,7 @@ const CourseDetailsLayout = async ({
   });
 
   if (!course) {
-    return redirect("/");
+    redirect("/"); // No need to return here either
   }
 
   return (
