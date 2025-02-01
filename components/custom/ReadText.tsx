@@ -1,7 +1,7 @@
 "use client";
 
 import { Editor } from "@tinymce/tinymce-react"; // Import TinyMCE Editor
-import { useMemo } from "react";
+//import { useMemo } from "react";
 
 interface ReadTextProps {
   value: string;
